@@ -1,0 +1,282 @@
+name: Emprunts
+description: ''
+endpoints:
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/v1/emprunt
+    metadata:
+      custom: []
+      groupName: Emprunts
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get a list of emprunts.'
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters:
+      page:
+        custom: []
+        name: page
+        description: 'optional The page number.'
+        required: false
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      per_page:
+        custom: []
+        name: per_page
+        description: 'optional The number of items per page.'
+        required: false
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanQueryParameters:
+      page: 16
+      per_page: 16
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/v1/emprunt
+    metadata:
+      custom: []
+      groupName: Emprunts
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Create a new emprunt.'
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      etudiant_id:
+        custom: []
+        name: etudiant_id
+        description: 'The ID of the etudiant.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      details_emprunt:
+        custom: []
+        name: details_emprunt
+        description: 'The details of the emprunt.'
+        required: true
+        example:
+          - architecto
+        type: 'string[]'
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      'details_emprunt[].livre_id':
+        custom: []
+        name: 'details_emprunt[].livre_id'
+        description: 'The <code>id</code> of an existing record in the livres table.'
+        required: true
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      'details_emprunt[].qte_emp':
+        custom: []
+        name: 'details_emprunt[].qte_emp'
+        description: 'Must be at least 1.'
+        required: true
+        example: 22
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      'details_emprunt.*.livre_id':
+        custom: []
+        name: 'details_emprunt.*.livre_id'
+        description: 'The ID of the livre.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      'details_emprunt.*.qte_emp':
+        custom: []
+        name: 'details_emprunt.*.qte_emp'
+        description: 'The quantity emprunted.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      etudiant_id: 16
+      details_emprunt:
+        - architecto
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - PUT
+      - PATCH
+    uri: 'api/v1/emprunt/{id}'
+    metadata:
+      custom: []
+      groupName: Emprunts
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Update an existing emprunt.'
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        custom: []
+        name: id
+        description: 'The ID of the emprunt.'
+        required: true
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      id: architecto
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      etudiant_id:
+        custom: []
+        name: etudiant_id
+        description: 'optional The ID of the etudiant.'
+        required: false
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      details_emprunt:
+        custom: []
+        name: details_emprunt
+        description: 'optional The details of the emprunt.'
+        required: false
+        example:
+          - architecto
+        type: 'string[]'
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      'details_emprunt[].livre_id':
+        custom: []
+        name: 'details_emprunt[].livre_id'
+        description: 'The <code>id</code> of an existing record in the livres table.'
+        required: false
+        example: null
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      'details_emprunt[].qte_emp':
+        custom: []
+        name: 'details_emprunt[].qte_emp'
+        description: 'Must be at least 1.'
+        required: false
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      'details_emprunt.*.livre_id':
+        custom: []
+        name: 'details_emprunt.*.livre_id'
+        description: 'int required The ID of the livre.'
+        required: false
+        example: architecto
+        type: optional
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      'details_emprunt.*.qte_emp':
+        custom: []
+        name: 'details_emprunt.*.qte_emp'
+        description: 'optional required The quantity emprunted.'
+        required: false
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      etudiant_id: 16
+      details_emprunt:
+        - architecto
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null

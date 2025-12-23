@@ -1,0 +1,18 @@
+{
+    "appId": "com.aabdd.miniprojet",
+    "files": [
+      "dist-react/**/*",
+      "src/electron/main.js"
+    ],
+    "icon":"src/assets/brand/logo.png",
+    "mac": {
+      "target": "dmg"
+    },
+    "win": {
+      "target": ["msi","portable"]
+    },
+    "linux": {
+      "target": "AppImage",
+      "category": "Utility"
+    }
+}

@@ -1,0 +1,358 @@
+name: Retards
+description: ''
+endpoints:
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/v1/retard
+    metadata:
+      custom: []
+      groupName: Retards
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get a list of retards.'
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/v1/retard
+    metadata:
+      custom: []
+      groupName: Retards
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Create a new retard.'
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      emprunt_id:
+        custom: []
+        name: emprunt_id
+        description: 'The ID of the emprunt.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      date_retard:
+        custom: []
+        name: date_retard
+        description: 'The date of the retard (YYYY-MM-DD).'
+        required: true
+        example: '2025-12-01'
+        type: date
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      montant:
+        custom: []
+        name: montant
+        description: 'The amount of the retard.'
+        required: true
+        example: 50.0
+        type: number
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      emprunt_id: 1
+      date_retard: '2025-12-01'
+      montant: 50.0
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 201
+        content: |-
+          {
+            "id": 1,
+            "emprunt_id": 1,
+            "date_retard": "2025-12-01",
+            "montant": 50.00,
+            "created_at": "2025-12-01T12:00:00.000000Z",
+            "updated_at": "2025-12-01T12:00:00.000000Z"
+          }
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 400
+        content: |-
+          {
+            "message": "details_emprunt is required"
+          }
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 500
+        content: |-
+          {
+            "message": "Failed to create retard"
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/v1/retard/{id}'
+    metadata:
+      custom: []
+      groupName: Retards
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get  retards by id.'
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        custom: []
+        name: id
+        description: 'The ID of the retard.'
+        required: true
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      id: architecto
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - PUT
+      - PATCH
+    uri: 'api/v1/retard/{id}'
+    metadata:
+      custom: []
+      groupName: Retards
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Update a specific retard.'
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        custom: []
+        name: id
+        description: 'The ID of the retard.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      emprunt_id:
+        custom: []
+        name: emprunt_id
+        description: 'The ID of the emprunt.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      date_retard:
+        custom: []
+        name: date_retard
+        description: 'The date of the retard (YYYY-MM-DD).'
+        required: false
+        example: '2025-12-01'
+        type: date
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      montant:
+        custom: []
+        name: montant
+        description: 'The amount of the retard.'
+        required: false
+        example: 50.0
+        type: number
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      emprunt_id: 1
+      date_retard: '2025-12-01'
+      montant: 50.0
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "id": 1,
+            "emprunt_id": 1,
+            "date_retard": "2025-12-01",
+            "montant": 60.00,
+            "created_at": "2025-12-01T12:00:00.000000Z",
+            "updated_at": "2025-12-02T12:00:00.000000Z"
+          }
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 404
+        content: |-
+          {
+            "message": "Retard not found"
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - DELETE
+    uri: 'api/v1/retard/{id}'
+    metadata:
+      custom: []
+      groupName: Retards
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Delete a specific retard.'
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        custom: []
+        name: id
+        description: 'The ID of the retard.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "message": "Retard deleted successfully"
+          }
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 404
+        content: |-
+          {
+            "message": "Retard not found"
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null

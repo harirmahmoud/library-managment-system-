@@ -1,0 +1,4 @@
+const PAYEE = 'PAYEE';
+const PARTIELLE = 'PARTIELLE';
+const NON_PAYEE = 'NON_PAYEE';
+export { PAYEE, PARTIELLE, NON_PAYEE };
