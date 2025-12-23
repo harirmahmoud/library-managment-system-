@@ -21,7 +21,7 @@ import { BASEURL } from '../../../axios/api'
 const Login = () => {
   const navigate = useNavigate();
   const [formData , setFormData] = React.useState({
-    email: '',
+    name: '',
     password: ''
   })
   const handleChange = (e) => {
@@ -70,7 +70,7 @@ const Login = () => {
                       <CInputGroupText>
                         <CIcon icon={cilUser} />
                       </CInputGroupText>
-                      <CFormInput placeholder="Email" autoComplete="email" name="email" value={formData.email} onChange={handleChange} />
+                      <CFormInput placeholder="Email" autoComplete="email" name="name" value={formData.name} onChange={handleChange} />
                     </CInputGroup>
                     <CInputGroup className="mb-4">
                       <CInputGroupText>
