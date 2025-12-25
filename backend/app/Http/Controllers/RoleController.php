@@ -16,7 +16,8 @@ class RoleController extends Controller
      */
     public function index()
     {
-       return response()->json(['roles' => Role::all(),'permissions' => Permission::all()], 200);
+
+       return response()->json(['roles' => Role::with('permissions')->get()], 200);
     }
     /**
      * @group Roles
@@ -187,13 +188,13 @@ class RoleController extends Controller
             'permissions_id' => 'exists:permissions,id',
         ]);
 
-        $role = Role::find($validatedData['role']);
+        $role = Role::find($validatedData['role_id']);
         if (!$role) {
             return response()->json(['message' => 'Role not found'], 404);
         }
 
 
-        $role->permissions()->sync($validatedData['permissions']);
+        $role->permissions()->sync($validatedData['permissions_id']);
 
         return response()->json(['message' => 'Permissions assigned successfully'], 200);
     }
@@ -207,26 +208,27 @@ class RoleController extends Controller
     {
         // Logic to revoke permissions from users
         $validatedData = $request->validate([
-            'role' => 'required|exists:roles,id',
-            'permissions' => 'exists:permissions,id',
+            'role_id' => 'required|exists:roles,id',
+            'permissions_id' => 'exists:permissions,id',
         ]);
 
-        $role = Role::find($validatedData['role']);
+        $role = Role::find($validatedData['role_id']);
         if (!$role) {
             return response()->json(['message' => 'Role not found'], 404);
         }
 
-        $role->permissions()->detach($validatedData['permissions']);
+        $role->permissions()->detach($validatedData['permissions_id']);
 
         return response()->json(['message' => 'Permissions revoked successfully'], 200);
     }
+    
     /**
      * @group Roles
      * Get all roles.
      */
     public function getALLRoles()
     {
-        $roles = Role::all();
+        $roles = Role::with('permissions')->get();
         return response()->json(['roles' => $roles], 200);
     }
     /**

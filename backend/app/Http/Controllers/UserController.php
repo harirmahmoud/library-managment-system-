@@ -18,7 +18,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return response()->json(['users' => User::all()], 200);
+        return response()->json(['users' => User::with('roles')->get()], 200);
     }
     /**
      * @group Users

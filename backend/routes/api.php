@@ -28,6 +28,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::delete('revoke-permissions', [App\Http\Controllers\RoleController::class, 'revokePermissions'])->name('roles.permissions.revoke');
             Route::get('roles', [App\Http\Controllers\RoleController::class, 'getAllRoles'])->name('roles.all');
             Route::get('permissions', [App\Http\Controllers\RoleController::class, 'getAllPermissions'])->name('roles.permissions.all');
+     
         });
 
     });
