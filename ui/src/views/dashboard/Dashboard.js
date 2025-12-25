@@ -55,7 +55,7 @@ import WidgetsBrand from '../widgets/WidgetsBrand'
 import WidgetsDropdown from '../widgets/WidgetsDropdown'
 import MainChart from './MainChart'
 import Axios from '../../axios/axios'
-import { VENTES } from '../../axios/api'
+import { EMPRUNT } from '../../axios/api'
 
 const Dashboard = () => {
   const [totalSales, setTotalSales] = React.useState(0)
@@ -63,8 +63,8 @@ const Dashboard = () => {
   useEffect(() => {
     try{
     const fetchData = async () => {
-      const { data: totalsales } = await Axios.get(VENTES+'/total-sales')
-      const { data: salesPerProductData } = await Axios.get(VENTES+'/total-sales-per-month')
+      const { data: totalsales } = await Axios.get(EMPRUNT+'/total-sales')
+      const { data: salesPerProductData } = await Axios.get(EMPRUNT+'/total-sales-per-month')
 
       
       setTotalSales(totalsales)
