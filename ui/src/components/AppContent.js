@@ -1,6 +1,7 @@
 import React, { Suspense } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { CContainer, CSpinner } from '@coreui/react'
+import RoleMiddleWare from '../auth/RoleMiddleWare' // Import your AuthCallback
 
 // routes config
 import routes from '../routes'
@@ -13,13 +14,23 @@ const AppContent = () => {
           {routes.map((route, idx) => {
             return (
               route.element && (
+                <Route   key={idx} element={
+                  route.allowedRoles ? (
+                    <RoleMiddleWare allowedRole={route.allowedRoles} />
+                  ) : (
+                    <React.Fragment></React.Fragment>
+                  )
+                }>
                 <Route
-                  key={idx}
+              
                   path={route.path}
                   exact={route.exact}
-                  name={route.name}
-                  element={<route.element />}
+                  element={
+
+                    <route.element />
+                  }
                 />
+                </Route>
               )
             )
           })}
