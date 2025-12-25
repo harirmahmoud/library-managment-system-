@@ -52,8 +52,8 @@ const App = () => {
           <Route element={<AuthCallback />} >
            <Route path="*" name="Home" element={<DefaultLayout />} />
           </Route>
-         <Route  path="/login" name="Login Page" element={<LoginCallback /> } >
-            <Route index element={<Login />} />
+         <Route  path="/login" name="Login Page" element={<Login /> } >
+          
          </Route>
           <Route exact path="/404" name="Page 404" element={<Page404 />} />
           <Route exact path="/500" name="Page 500" element={<Page500 />} />

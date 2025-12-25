@@ -13,6 +13,7 @@ import {
   cilUser,
 } from '@coreui/icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
+import { all } from 'axios'
 
 const _nav = [
   {
@@ -24,6 +25,7 @@ const _nav = [
       color: 'info',
       text: 'NEW',
     },
+    allowedRoles: ['admin', 'user','gestionnaire_etudiant'],
   },
   {
     component: CNavGroup,
@@ -37,6 +39,7 @@ const _nav = [
         to: '/PointDeVente/PVente',
       },
     ],
+    allowedRoles: ['admin', 'user','gestionnaire_etudiant'],
   },
   {
     component: CNavGroup,
@@ -54,6 +57,7 @@ const _nav = [
         to: '/fournisseur/achat',
       },
     ],
+    allowedRoles: ['admin', 'user','gestionnaire_etudiant'],
   },
   {
     component: CNavGroup,
@@ -71,6 +75,7 @@ const _nav = [
         to: '/produit/categories',
       },
     ],
+    allowedRoles: ['admin', 'user','gestionnaire_etudiant'],
   },
   {
     component: CNavGroup,
@@ -88,6 +93,26 @@ const _nav = [
         to: '/client/vente',
       },
     ],
+    allowedRoles: ['admin', 'user','gestionnaire_etudiant'],
+  },
+  {
+    component: CNavTitle,
+    name: 'Administration',
+  },
+  {
+    component: CNavItem,
+    name: 'Utilisateurs',
+    to: '/admin/users',
+    icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
+    allowedRoles: ['admin'],
+  },
+
+  {
+    component: CNavItem,
+    name: 'Rôles et Permissions',
+    to: '/admin/roles_perms',
+    icon: <CIcon icon={cilBriefcase} customClassName="nav-icon" />,
+    allowedRoles: ['admin'],
   },
 ]
 

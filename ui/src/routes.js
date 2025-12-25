@@ -1,3 +1,4 @@
+
 import React from 'react'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
@@ -17,29 +18,33 @@ const Categorie = React.lazy(() => import('./views/produit/categorie/Categorie')
 // Notifications
 const GestionClient = React.lazy(() => import('./views/client/gestionclient/GestionClient'))
 const Vente = React.lazy(() => import('./views/client/vente/Vente'))
-
-
+const Users = React.lazy(() => import('./views/admin/users/Users'))
+const roles_perms = React.lazy(() => import('./views/admin/roles_perms/Roles_perms'))
 const routes = [
-  { path: '/', exact: true, name: 'Home' },
-  { path: '/dashboard', name: 'Dashboard', element: Dashboard },
-  { path: '/PointDeVente/PVente', name: 'point de vente', element: PVente },
-  { path: '/fournisseur', name: 'Forms', element: GestionFournisseur, exact: true },
+  { path: '/', exact: true, name: 'Home' , allowedRoles: ['admin', 'user','gestionnaire_etudiant'],},
+  { path: '/dashboard', name: 'Dashboard', element: Dashboard , allowedRoles: ['admin', 'user','gestionnaire_etudiant'],},
+  { path: '/PointDeVente/PVente', name: 'point de vente', element: PVente , allowedRoles: ['admin', 'user','gestionnaire_etudiant'],},
+  { path: '/fournisseur', name: 'Forms', element: GestionFournisseur, exact: true, allowedRoles: ['admin', 'user','gestionnaire_etudiant'], },
   {
     path: '/fournisseur/gestionfournisseur',
     name: 'Gestion Fournisseur',
     element: GestionFournisseur,
+     allowedRoles: ['admin', 'user','gestionnaire_etudiant'],
   },
     {
     path: 'fournisseur/achat',
     name: 'Achats Fournisseur',
     element: Achat,
+    allowedRoles: ['admin', 'user','gestionnaire_etudiant'],
   },
-  { path: '/produit', exact: true, name: 'Produits', element: Produit },
-  { path: '/produit/gestionproduit', name: 'Gestion Produits', element: Produit },
-  { path: '/produit/categories', name: 'Catégories', element: Categorie },
-  { path: '/client', name: 'client', element: GestionClient, exact: true },
-  { path: '/client/GestionClient', name: 'Client', element: GestionClient },
-  { path: '/client/vente', name: 'ventes', element: Vente },
+  { path: '/produit', exact: true, name: 'Produits', element: Produit , allowedRoles: ['admin', 'user','gestionnaire_etudiant']},
+  { path: '/produit/gestionproduit', name: 'Gestion Produits', element: Produit , allowedRoles: ['admin', 'user','gestionnaire_etudiant']},
+  { path: '/produit/categories', name: 'Catégories', element: Categorie, allowedRoles: ['admin', 'user','gestionnaire_etudiant'] },
+  { path: '/client', name: 'client', element: GestionClient, exact: true, allowedRoles: ['admin', 'user','gestionnaire_etudiant'] },
+  { path: '/client/GestionClient', name: 'Client', element: GestionClient, allowedRoles: ['admin', 'user','gestionnaire_etudiant'] },
+  { path: '/client/vente', name: 'ventes', element: Vente, allowedRoles: ['admin', 'user','gestionnaire_etudiant'] },
+  { path: '/admin/users', name: 'Utilisateurs', element: Users , allowedRoles: ['admin']},
+  { path: '/admin/roles_perms', name: 'Rôles et Permissions', element: roles_perms , allowedRoles: ['admin']},
 ]
 
 export default routes

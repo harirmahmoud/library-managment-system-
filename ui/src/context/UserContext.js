@@ -14,7 +14,11 @@ export function UserProvider({ children }) {
     const fetchUser = async () => {
       try {
         setLoading(true);
-        const res = await Axios.get("/me"); 
+        if(!localStorage.getItem('token')){
+          setLoading(false);
+          return;
+        }
+        const res = await Axios.get("/auth/profile");
         setUser(res.data);
       } catch (err) {
         console.error(err);
