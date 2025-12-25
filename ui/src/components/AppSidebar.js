@@ -18,7 +18,7 @@ import { logo } from 'src/assets/brand/logo'
 import { sygnet } from 'src/assets/brand/sygnet'
 
 // sidebar nav config
-import navigation from '../_nav'
+import navigationbefore from '../_nav'
 import { useUser } from '../context/UserContext'
 
 const AppSidebar = () => {
@@ -26,11 +26,21 @@ const AppSidebar = () => {
   const unfoldable = useSelector((state) => state.sidebarUnfoldable)
   const sidebarShow = useSelector((state) => state.sidebarShow)
   const { user, loading, error } = useUser()
-  if (user) {
-      if (user.role !== 'admin') {
-     navigation.shift()
-  }
-  }
+  const [navigation, setNavigation] = React.useState([])
+  React.useEffect(() => {
+    if (!loading && user) {
+      // Filter navigation items based on user roles
+      const filteredNavigation = navigationbefore.filter((item) => {
+        if (item.allowedRoles) {
+          return item.allowedRoles.some((role) =>
+            user.user.roles.some((userRole) => userRole.name === role)
+          )
+        }
+        return true // Include items without role restrictions
+      })
+      setNavigation(filteredNavigation)
+    }
+  }, [user,navigationbefore,loading])
 
 
   return (
