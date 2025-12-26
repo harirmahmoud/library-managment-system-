@@ -127,10 +127,10 @@ class EmpruntController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'etudiant_id' => 'exists:etudiants,id|optional',
-            'details_emprunt' => 'array|min:1|optional',
-            'details_emprunt.*.livre_id' => 'exists:livres,id|optional',
-            'details_emprunt.*.qte_emp' => 'integer|min:1|optional',
+            'etudiant_id' => 'exists:etudiants,id|sometimes',
+            'details_emprunt' => 'array|min:1|sometimes',
+            'details_emprunt.*.livre_id' => 'exists:livres,id|sometimes',
+            'details_emprunt.*.qte_emp' => 'integer|min:1|sometimes',
         ]);
         if (!EMPRUNT::where('id', $id)->exists()) {
             return response()->json(['message' => 'Emprunt not found'], 404);
