@@ -19,7 +19,9 @@ export function UserProvider({ children }) {
           return;
         }
         const res = await Axios.get("/auth/profile");
+  
         setUser(res.data);
+      
       } catch (err) {
         console.error(err);
         setError(err.message);

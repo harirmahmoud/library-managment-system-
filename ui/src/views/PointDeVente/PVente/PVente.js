@@ -20,7 +20,6 @@ import {
 import { useEffect } from 'react'
 import { useState } from 'react'
 import Axios from '../../../axios/axios'
-import { CATEGORIES, CLIENTS, FOURNISSEUR, PRODUIT, VENTES } from '../../../axios/api'
 import { useUser } from '../../../context/UserContext'
 import { useReactToPrint } from 'react-to-print'
 
@@ -50,9 +49,9 @@ const PVente = () => {
     const fetchData = async () => {
       try {
         const [clientsRes, categoriesRes, produitsRes] = await Promise.all([
-          Axios.get(CLIENTS),
-          Axios.get(CATEGORIES),
-          Axios.get(PRODUIT)
+          Axios.get(''),
+          Axios.get(''),
+          Axios.get('')
         ])
         setClients(clientsRes.data)
         setCategories(categoriesRes.data)
