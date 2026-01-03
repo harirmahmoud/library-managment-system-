@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 import React, { use, useEffect } from 'react'
+import { Trash2 } from 'lucide-react'
 import {
   CAlert,
   CAlertHeading,
@@ -18,7 +19,7 @@ import {
   CTable,
 } from '@coreui/react'
 import Axios from '../../../axios/axios'
-import { CATEGORIES, CLIENTS, PRODUIT } from '../../../axios/api'
+import {  ETUDIANT, LIVRE } from '../../../axios/api'
 import { useUser } from '../../../context/UserContext'
 import { ADMIN } from '../../../context/Roles'
 import Barcode    from 'react-barcode';
@@ -37,28 +38,37 @@ const GestionProduit = () => {
   const { user, loading, error } = useUser();
   console.log(produit)
   const [produitForm, setProduitForm] = React.useState({
-    id: '',
-    nom: '',
-    code_barre:'',
-    description: '',
-    prix: '',
-    prix_achat: '',
-    unite_mesure: '',
-    reduction: '',
-    taxe: '',
-    prix_final: '',
-    quantite_stock: '',
-    category_id: '',
-    created_at:''
+    id: 0,
+    titre: '',
+         auteur: '',
+         genre: '',
+         isbn: '',
+         annee: '',
+        
+         quantite: 0,
   
   })
   const [modal, setModal] = React.useState({state: false, mode: 'save'})
   const [formErrors, setFormErrors] = React.useState({})
   const [showAlert, setShowAlert] = React.useState(false)
   const fetchCategories = async () => {
-    const categoriesData = await Axios.get(CATEGORIES)
-    setCategories(categoriesData.data)
+    const categoriesData = await Axios.get(LIVRE).then(res => {
+      res.data.data.forEach((livre) => {
+          setCategories((prevCategories) => {
+            if (!prevCategories.find((cat) => cat === livre.genre)) {
+              return [...prevCategories, livre.genre]
+            }
+            return prevCategories
+          })
+        })
+    })
+     
+    
   } 
+
+  useEffect(()=>{
+    console.log(user.role)
+  },[])
   const openModal = async () => {
     try {
       setModal({state: true, mode: 'save'});
@@ -69,7 +79,7 @@ const GestionProduit = () => {
     
   }
     const fetchProduits = async () => {
-      const produitsData = await Axios.get(PRODUIT)
+      const produitsData = await Axios.get(LIVRE)
       setProduit(produitsData.data)
     }
   useEffect(() => {
@@ -79,6 +89,13 @@ const GestionProduit = () => {
   }, [produitChanged])
   const handleInputChange = (e) => {
     const { id, value } = e.target
+    if(id==="quantite"){
+      setProduitForm((prevState) => ({
+        ...prevState,
+        [id]: parseInt(value),
+      }))
+      return
+    }
     setProduitForm((prevState) => ({
       ...prevState,
       [id]: value,
@@ -91,50 +108,34 @@ const GestionProduit = () => {
     const codeBarre = `PRD${timestamp.slice(-6)}${random}`
     setProduitForm((prevState) => ({
       ...prevState,
-      code_barre: codeBarre,
+      isbn: codeBarre,
     }))
   }
   const validateProduitForm = () => {
     const errors = {}
     
-    if (!produitForm.nom.trim()) {
-      errors.nom = 'Le nom du produit est requis'
+    if (!produitForm.titre.trim()) {
+      errors.titre = 'Le titre du produit est requis'
     }
-    
-    if (!produitForm.code_barre.trim()) {
-      errors.code_barre = 'Le code barre est requis'
+
+    if (!produitForm.isbn.trim()) {
+      errors.isbn = 'Le code barre est requis'
     }
-    
-    if (!produitForm.description.trim()) {
-      errors.description = 'La description est requise'
+
+    if (!produitForm.auteur.trim()) {
+      errors.auteur = 'L\'auteur est requis'
     }
-    
-    if (!produitForm.prix || parseFloat(produitForm.prix) <= 0) {
-      errors.prix = 'Le prix doit être un nombre positif'
+
+    if (!produitForm.genre) {
+      errors.genre = 'Le genre est requis'
     }
-    
-    if (!produitForm.prix_achat || parseFloat(produitForm.prix_achat) <= 0) {
-      errors.prix_achat = 'Le prix d\'achat doit être un nombre positif'
+
+    if (!produitForm.annee || parseFloat(produitForm.annee) <= 0) {
+      errors.annee = 'L\'année doit être un nombre positif'
     }
-    
-    if (!produitForm.unite_mesure.trim()) {
-      errors.unite_mesure = 'L\'unité de mesure est requise'
-    }
-    
-    if (produitForm.reduction && (parseFloat(produitForm.reduction) < 0 || parseFloat(produitForm.reduction) > 100)) {
-      errors.reduction = 'La réduction doit être entre 0 et 100%'
-    }
-    
-    if (produitForm.taxe && (parseFloat(produitForm.taxe) < 0 || parseFloat(produitForm.taxe) > 100)) {
-      errors.taxe = 'La taxe doit être entre 0 et 100%'
-    }
-    
-    if (!produitForm.quantite_stock || parseInt(produitForm.quantite_stock) < 0) {
-      errors.quantite_stock = 'La quantité en stock doit être un nombre positif'
-    }
-    
-    if (!produitForm.category_id) {
-      errors.category_id = 'La catégorie est requise'
+
+    if (!produitForm.quantite || parseInt(produitForm.quantite) < 0) {
+      errors.quantite = 'La quantité doit être un nombre positif'
     }
 
     setFormErrors(errors)
@@ -148,21 +149,19 @@ const GestionProduit = () => {
     }
 
     try{
-      const res = await Axios.post(PRODUIT, produitForm)
+      const res = await Axios.post(LIVRE, produitForm)
       console.log('Produit enregistré avec succès:', res.data)
       setProduitChanged(!produitChanged)
       setProduitForm({
-         nom: '',
-         code_barre: '',
-         description: '',
-         prix: '',
-         prix_achat: '',
-         unite_mesure: '',
-         reduction: '',
-         taxe: '',
-         prix_final: '',
-         quantite_stock: '',
-         category_id: '',
+        id: 0,
+         titre: '',
+         auteur: '',
+         genre: '',
+         isbn: '',
+         annee: '',
+        
+         quantite: 0,
+        
        })
       setFormErrors({})
       setShowAlert(false)
@@ -180,23 +179,18 @@ const GestionProduit = () => {
     }
 
     try{
-      const res = await Axios.put(`${PRODUIT}/${produitForm.id}`, produitForm)
+      const res = await Axios.put(`${LIVRE}/${produitForm.id}`, produitForm)
       console.log('Produit modifié avec succès:', res.data)
       setProduitChanged(!produitChanged)
       setProduitForm({
-         id: '',
-         nom: '',
-         code_barre: '',
-         description: '',
-         prix: '',
-         prix_achat: '',
-         unite_mesure: '',
-         reduction: '',
-         taxe: '',
-         prix_final: '',
-         quantite_stock: '',
-         category_id: '',
-         created_at: ''
+        id: 0,
+           titre: '',
+         autheur: '',
+         genre: '',
+         isbn: '',
+         annee: '',
+        
+         quantite: 0,
        })
       setFormErrors({})
       setShowAlert(false)
@@ -217,6 +211,8 @@ const GestionProduit = () => {
     }
   }
 
+ 
+
   return (
     <CRow>
       <CCol xs={12}>
@@ -232,9 +228,7 @@ const GestionProduit = () => {
                 return
               }
               try{
-                const res = await Axios.get(`${PRODUIT}/search/by-name`, {
-                  name: query
-                })
+                const res = await Axios.get(`${LIVRE}?search=${query}`)
                 setProduit(res.data)
                 setProduitChanged(!produitChanged)
                 console.log('Résultats de la recherche des produits:', res.data)
@@ -243,9 +237,9 @@ const GestionProduit = () => {
               }
             }}
           />
-          {user && user.role === ADMIN && (
+          {user && user.roles[0].name === "admin" && (
             <CButton color="primary" className="mb-3" onClick={openModal}>Ajouter </CButton>
-          )}
+       )} 
         </div>
          <CModal size="lg" visible={codeBarreState.state} onClose={() => setCodeBarreState({state: false, value: ''})}>
           <CCard>
@@ -291,16 +285,16 @@ const GestionProduit = () => {
                 </CCol>}
                 <CCol>
                   <label htmlFor="nom" className="form-label">
-                    Nom Produit
+                    Titre de livre 
                   </label>
-                  <input type="text" className={`form-control ${formErrors.nom ? 'is-invalid' : ''}`} id="nom" onChange={handleInputChange} value={produitForm.nom}  placeholder="Entrez le nom" />
+                  <input type="text" className={`form-control ${formErrors.titre ? 'is-invalid' : ''}`} id="titre" onChange={handleInputChange} value={produitForm.titre}  placeholder="Entrez le titre" />
                 </CCol>
                 <CCol>
                   <label htmlFor="code_barre" className="form-label">
                     Code Barre
                   </label>
                   <div className="d-flex gap-2">
-                    <input type="text" className={`form-control ${formErrors.code_barre ? 'is-invalid' : ''}`} id="code_barre" onChange={handleInputChange} value={produitForm.code_barre}  placeholder="Entrez le code barre" />
+                    <input type="text" className={`form-control ${formErrors.isbn ? 'is-invalid' : ''}`} id="isbn" onChange={handleInputChange} value={produitForm.isbn}  placeholder="Entrez le code barre" />
                     <CButton color="secondary" type="button" onClick={generateCodeBarre}>
                       Générer
                     </CButton>
@@ -311,76 +305,45 @@ const GestionProduit = () => {
               <CRow className="mb-3">
                 <CCol>
                   <label htmlFor="description" className="form-label">
-                    Description
+                    Auteur
                   </label>
-                  <input type="text" className={`form-control ${formErrors.description ? 'is-invalid' : ''}`} id="description" onChange={handleInputChange} value={produitForm.description}  placeholder="Entrez la description" />
+                  <input type="text" className={`form-control ${formErrors.auteur ? 'is-invalid' : ''}`} id="auteur" onChange={handleInputChange} value={produitForm.auteur}  placeholder="Entrez l'auteur" />
                 </CCol>
                 <CCol>
                   <label htmlFor="unite_mesure" className="form-label">
-                    Unité de mesure
+                    Année
                   </label>
-                  <input type="text" className={`form-control ${formErrors.unite_mesure ? 'is-invalid' : ''}`} id="unite_mesure" onChange={handleInputChange} value={produitForm.unite_mesure}  placeholder="Ex: kg, pièce, litre" />
+                  <input type="date" className={`form-control ${formErrors.annee ? 'is-invalid' : ''}`} id="annee" onChange={handleInputChange} value={produitForm.annee}  placeholder="annee" />
                 </CCol>
               </CRow>
 
               <CRow className="mb-3">
                 <CCol>
                   <label htmlFor="prix" className="form-label">
-                    Prix de vente
+                   Quantité
                   </label>
-                  <input type="number" step="0.01" className={`form-control ${formErrors.prix ? 'is-invalid' : ''}`} id="prix" onChange={handleInputChange} value={produitForm.prix}  placeholder="Entrez le prix de vente" />
+                  <input type="number" step="0.01" className={`form-control ${formErrors.quantite ? 'is-invalid' : ''}`} id="quantite" onChange={handleInputChange} value={produitForm.quantite}  placeholder="Entrez la quantite" />
                 </CCol>
-                <CCol>
-                  <label htmlFor="prix_achat" className="form-label">
-                    Prix d'achat
-                  </label>
-                  <input type="number" step="0.01" className={`form-control ${formErrors.prix_achat ? 'is-invalid' : ''}`} id="prix_achat" onChange={handleInputChange} value={produitForm.prix_achat}  placeholder="Entrez le prix d'achat" />
-                </CCol>
+                
               </CRow>
 
-              <CRow className="mb-3">
-                <CCol>
-                  <label htmlFor="reduction" className="form-label">
-                    Réduction (%)
-                  </label>
-                  <input type="number" step="0.01" className={`form-control ${formErrors.reduction ? 'is-invalid' : ''}`} id="reduction" onChange={handleInputChange} value={produitForm.reduction}  placeholder="Ex: 10.5" />
-                </CCol>
-                <CCol>
-                  <label htmlFor="taxe" className="form-label">
-                    Taxe (%)
-                  </label>
-                  <input type="number" step="0.01" className={`form-control ${formErrors.taxe ? 'is-invalid' : ''}`} id="taxe" onChange={handleInputChange} value={produitForm.taxe}  placeholder="Ex: 20" />
-                </CCol>
-              </CRow>
+              
 
-              <CRow className="mb-3">
-                <CCol>
-                  <label htmlFor="prix_final" className="form-label">
-                    Prix final
-                  </label>
-                  <input type="number" step="0.01" className={`form-control ${formErrors.prix_final ? 'is-invalid' : ''}`} id="prix_final" onChange={handleInputChange} value={produitForm.prix_final}  placeholder="Prix après réduction et taxe" />
-                </CCol>
-                <CCol>
-                  <label htmlFor="quantite_stock" className="form-label">
-                    Quantité en stock
-                  </label>
-                  <input type="number" className={`form-control ${formErrors.quantite_stock ? 'is-invalid' : ''}`} id="quantite_stock" onChange={handleInputChange} value={produitForm.quantite_stock}  placeholder="Quantité disponible" />
-                </CCol>
-              </CRow>
+              
 
               <CRow className="mb-3">
                 <CCol>
                   <label htmlFor="category_id" className="form-label">
                     Catégorie 
                   </label>
-                  <CFormSelect className={`${formErrors.category_id ? 'is-invalid' : ''}`} id="category_id" onChange={handleInputChange} value={produitForm.category_id} >
+                  <CFormSelect className={`${formErrors.genre ? 'is-invalid' : ''}`} id="genre" onChange={handleInputChange} value={produitForm.genre} >
                     <option value="">Sélectionnez une catégorie</option>
                     {categories.length === 0 && (
                       <option value="" disabled>Aucune catégorie disponible</option>
                     )}
                     {categories.map((cat) => (
-                      <option key={cat.id} value={cat.id}>
-                        {cat.nom}
+                      <option key={cat} value={cat}>
+                        {cat}
                       </option>
                     ))}
                   </CFormSelect>
@@ -408,59 +371,50 @@ const GestionProduit = () => {
         <thead>
           <tr>
             <th>#</th>
-            <th>Nom</th>
+            <th>Titre</th>
             <th>Code Barre</th>
-            <th>Description</th>
-            <th>Prix</th>
-            <th>Prix d'achat</th>
-            <th>Unité de mesure</th>
-            <th>Réduction</th>
-            <th>Taxe</th>
-            <th>Prix final</th>
+            <th>Auteur</th>
+            <th>Annee</th>
+            <th>Quantité</th>
+            <th>Catégorie</th>
+           
+            
          
-            <th>Quantité en stock</th>
-               <th>Catégorie</th>
-            <th>Date de création</th>
-            {user && user.role === ADMIN && (<th>Action</th>)}
+          
+            {user && user.roles[0].name === ADMIN && (<th>Action</th>)}
           </tr>
         </thead>
         <tbody>
           { produit.data ? produit.data.map((clt, index) => (
             <tr key={clt.id}>
               <td>{index + 1}</td>
-              <td>{clt.nom}</td>
-              <td>{clt.code_barre}</td>
-              <td>{clt.description}</td>
-              <td>{clt.prix}</td>
-              <td>{clt.prix_achat}</td>
-              <td>{clt.unite_mesure}</td>
-              <td>{clt.reduction}</td>
-              <td>{clt.taxe}</td>
-              <td>{clt.prix_final}</td>
-              <td>{clt.quantite_stock}</td>
-              <td> {categories.find(cat => cat.id === clt.category_id)?.nom || 'Inconnu'}</td>
-              <td>{ new Date(clt.created_at).toLocaleDateString()}</td>
-               {user && user.role === ADMIN && (
+              <td>{clt.titre}</td>
+              <td>{clt.isbn}</td>
+              <td>{clt.auteur}</td>
+              <td>{clt.annee}</td>
+              <td>{clt.quantite}</td>
+              <td>{clt.genre}</td>
+              
+             
+             
+             
+             
+               {user && user.roles[0].name === ADMIN && (
                <td >
                 <div className='d-flex gap-2 align-items-center'>
-                   <CButton color="warning"  className='text-white' size="sm" onClick={() => setCodeBarreState({state: true, value: clt.code_barre})}>
+                   <CButton color="warning"  className='text-white' size="sm" onClick={() => setCodeBarreState({state: true, value: clt.isbn})}>
                       <CIcon icon={cilPrint} />
                     </CButton>
                  <CButton color="info"  size="sm" className="text-white" onClick={()=>{
                    setProduitForm({
                      id: clt.id,
-                     nom: clt.nom,
-                     code_barre: clt.code_barre,
-                     description: clt.description,
-                     prix: clt.prix,
-                     prix_achat: clt.prix_achat,
-                     unite_mesure: clt.unite_mesure,
-                     reduction: clt.reduction,
-                     taxe: clt.taxe,
-                     prix_final: clt.prix_final,
-                     quantite_stock: clt.quantite_stock,
-                     category_id: clt.category_id,
-                     created_at: clt.created_at
+                     titre: clt.titre,
+                     isbn: clt.isbn,
+                     auteur: clt.auteur,
+                     annee: clt.annee,
+                     quantite: clt.quantite,
+                     genre: clt.genre,
+                    
                    })
                   setModal({state: true, mode: 'edit'})
                 }}>
@@ -468,7 +422,7 @@ const GestionProduit = () => {
                 </CButton>
                 <CButton color="danger"  className='text-white' size="sm" onClick={async ()=>{
                   try{
-                    await Axios.delete(`${PRODUIT}/${clt.id}`)
+                    await Axios.delete(`${LIVRE}/${clt.id}`)
                     setProduitChanged(!produitChanged)
                   } catch (error) {
                     console.error('Erreur lors de la suppression du produit:', error)
@@ -478,7 +432,8 @@ const GestionProduit = () => {
                   Supprimer
                 </CButton></div>
                  
-              </td>)}
+              </td>
+            )} 
             </tr>
           )) : (
             <tr>
