@@ -22,9 +22,18 @@ import { useState } from 'react'
 import Axios from '../../../axios/axios'
 import { useUser } from '../../../context/UserContext'
 import { useReactToPrint } from 'react-to-print'
+import { EMPRUNT, ETUDIANT, LIVRE } from '../../../axios/api'
 
 const PVente = () => {
   // State management
+    const [etudiants, setEtudiants] = useState([])
+    const [livres, setLivres] = useState([])
+    const [emprunts, setEmprunts] = useState([])
+  const [filteredLivres, setFilteredLivres] = useState([])
+  
+    const [selectedEtudiant, setSelectedEtudiant] = useState('')
+    const [selectedLivre, setSelectedLivre] = useState(null)
+    const [quantite, setQuantite] = useState(1)
   const [clients, setClients] = useState([])
   const [categories, setCategories] = useState([])
   const [produits, setProduits] = useState([])
@@ -47,19 +56,37 @@ const PVente = () => {
   // Fetch initial data
   useEffect(() => {
     const fetchData = async () => {
+      
       try {
-        const [clientsRes, categoriesRes, produitsRes] = await Promise.all([
-          Axios.get(''),
-          Axios.get(''),
-          Axios.get('')
+        console.log('Fetching data...')
+        const [empruntsRes, etudiantsRes, livresRes] = await Promise.all([
+          Axios.get(EMPRUNT),
+          Axios.get(ETUDIANT),
+          Axios.get(LIVRE),
         ])
-        setClients(clientsRes.data)
-        setCategories(categoriesRes.data)
-        setProduits(produitsRes.data.data)
+
+        setEmprunts(empruntsRes.data.data)
+        setEtudiants(etudiantsRes.data.data)
+        setLivres(livresRes.data.data)
+        console.log('Data fetched:', {emprunts: empruntsRes.data.data, etudiants: etudiantsRes.data.data, livres: livresRes.data.data}  )
+        livresRes.data.data.forEach((livre) => {
+          setCategories((prevCategories) => {
+            if (!prevCategories.find((cat) => cat === livre.genre)) {
+              return [...prevCategories, livre.genre]
+            }
+            return prevCategories
+          })
+        })
+        setFilteredLivres(livresRes.data.data)
+        console.log({empruntsRes:empruntsRes.data.data})
+        console.log(etudiantsRes.data.data)
+        console.log(livresRes.data.data)
+        console.log('Data fetch complete')
       } catch (error) {
-        console.error('Erreur lors de la récupération des données:', error)
+        console.error('Error fetching data:', error)
         showMessage('Erreur lors du chargement des données', 'danger')
       }
+      
     }
     fetchData()
   }, [])
@@ -84,13 +111,11 @@ const PVente = () => {
     if (!searchCode.trim()) return
     
     try {
-      const product = produits.find(p => p.code_barre === searchCode.trim())
-      if (product) {
-        addToCart(product)
+      const product = await Axios.get(`${LIVRE}?search=${searchCode.trim()}`).then(res =>{ setFilteredLivres(res.data.data)
+          addToCart(res.data.data[0])
         setSearchCode('')
-      } else {
-        showMessage('Produit non trouvé avec ce code barre', 'warning')
-      }
+      })
+      
     } catch (error) {
       showMessage('Erreur lors de la recherche', 'danger')
     }
@@ -98,23 +123,27 @@ const PVente = () => {
 
   const searchProductByName = async () => {
     if (!searchName.trim()) return
+    try{
+       const filteredProducts = Axios.get(`${LIVRE}?search=${searchName.trim()}`).then(res =>{ setFilteredLivres(res.data.data)
+      if(res.data.data.length === 1){
+        addToCart(res.data.data[0])
+        setSearchName('')
+      } else if(res.data.data.length > 1){
+        showMessage('Plusieurs produits trouvés, soyez plus spécifique', 'info')
+      } else {
+        showMessage('Aucun produit trouvé avec ce nom', 'warning')
+      }
+    })
+    }
+   
     
-    const filteredProducts = produits.filter(p => 
-      p.nom.toLowerCase().includes(searchName.toLowerCase())
-    )
-    
-    if (filteredProducts.length === 1) {
-      addToCart(filteredProducts[0])
-      setSearchName('')
-    } else if (filteredProducts.length > 1) {
-      showMessage('Plusieurs produits trouvés, soyez plus spécifique', 'info')
-    } else {
-      showMessage('Aucun produit trouvé avec ce nom', 'warning')
+    catch (error) {
+      showMessage('Erreur lors de la recherche', 'danger')
     }
   }
 
   const addToCart = (product) => {
-    if (product.quantite_stock <= 0) {
+    if (Number(product.quantite) <= 0) {
       showMessage('Produit en rupture de stock', 'danger')
       return
     }
@@ -122,7 +151,7 @@ const PVente = () => {
     const existingItem = cart.find(item => item.id === product.id)
     
     if (existingItem) {
-      if (existingItem.quantite >= product.quantite_stock) {
+      if (existingItem.quantite >= Number(product.quantite)) {
         showMessage('Stock insuffisant', 'warning')
         return
       }
@@ -134,7 +163,7 @@ const PVente = () => {
     } else {
       setCart([...cart, { ...product, quantite: 1 }])
     }
-    showMessage(`${product.nom} ajouté au panier`, 'success')
+    showMessage(`${product.title} ajouté au panier`, 'success')
   }
 
   const updateQuantity = (productId, newQuantity) => {
@@ -144,7 +173,7 @@ const PVente = () => {
     }
 
     const product = produits.find(p => p.id === productId)
-    if (newQuantity > product.quantite_stock) {
+    if (newQuantity >Number( product.quantite)) {
       showMessage('Stock insuffisant', 'warning')
       return
     }
@@ -175,7 +204,7 @@ const PVente = () => {
       return
     }
 
-    if (!selectedClient) {
+    if (!selectedEtudiant) {
       showMessage('Veuillez sélectionner un client', 'warning')
       return
     }
@@ -205,8 +234,9 @@ const PVente = () => {
   }
 
   const getFilteredProducts = () => {
-    return produits.filter(product => {
-      const matchesCategory = !selectedCategory || product.category_id === parseInt(selectedCategory)
+    return filteredLivres.filter(product => {
+      
+      const matchesCategory = !selectedCategory || product.genre === selectedCategory
       return matchesCategory
     })
   }
@@ -228,18 +258,18 @@ const PVente = () => {
           {/* Client Selection */}
           <CCard className="mb-3">
             <CCardHeader>
-              <strong>Sélection Client</strong>
+              <strong>Sélection Etudiant</strong>
             </CCardHeader>
             <CCardBody>
               <CFormSelect 
-                value={selectedClient} 
-                onChange={(e) => setSelectedClient(e.target.value)}
+                value={selectedEtudiant} 
+                onChange={(e) => setSelectedEtudiant(e.target.value)}
                 className="form-control-lg"
               >
-                <option value="">Sélectionner un client...</option>
-                {clients.map((client) => (
-                  <option key={client.id} value={client.id}>
-                    {client.nom} - {client.email}
+                <option value="">Sélectionner un etudiant...</option>
+                {etudiants.map((etudiant) => (
+                  <option key={etudiant.id} value={etudiant.id}>
+                    {etudiant.nom} - {etudiant.email}
                   </option>
                 ))}
               </CFormSelect>
@@ -249,12 +279,12 @@ const PVente = () => {
           {/* Product Search */}
           <CCard className="mb-3">
             <CCardHeader>
-              <strong>Recherche Produit</strong>
+              <strong>Recherche Livre</strong>
             </CCardHeader>
             <CCardBody>
               <CRow className="g-3">
                 <CCol md={6}>
-                  <label className="form-label fw-bold">Code Produit</label>
+                  <label className="form-label fw-bold">Code Livre</label>
                   <div className="d-flex gap-2">
                       <CFormInput
                       type="text"
@@ -280,7 +310,7 @@ const PVente = () => {
                   </div>
                 </CCol>
                 <CCol md={6}>
-                  <label className="form-label fw-bold">Nom Produit</label>
+                  <label className="form-label fw-bold">Nom Livre</label>
                   <div className="d-flex gap-2">
                     <CFormInput
                       type="text"
@@ -306,7 +336,7 @@ const PVente = () => {
                     <option value="">Toutes les catégories</option>
                     {categories.map((category) => (
                       <option key={category.id} value={category.id}>
-                        {category.nom}
+                        {category}
                       </option>
                     ))}
                   </CFormSelect>
@@ -318,7 +348,7 @@ const PVente = () => {
           {/* Available Products Grid */}
           <CCard className="mb-3">
             <CCardHeader>
-              <strong>Produits Disponibles</strong>
+              <strong>Livres Disponibles</strong>
             </CCardHeader>
             <CCardBody style={{ maxHeight: '400px', overflowY: 'auto' }}>
               <CRow className="g-2">
@@ -337,15 +367,13 @@ const PVente = () => {
                       onMouseLeave={(e) => e.target.style.backgroundColor = product.quantite_stock > 0 ? '#f8f9fa' : '#ffebee'}
                     >
                       <div>
-                        <div className="fw-bold text-truncate" title={product.nom}>
-                          {product.nom}
+                        <div className="fw-bold text-truncate" title={product.titre}>
+                          {product.titre}
                         </div>
                         <div className="text-muted small">
-                          {product.code_barre}
+                          {product.isbn}
                         </div>
-                        <div className="text-primary fw-bold">
-                          {parseFloat(product.prix || 0).toFixed(2)} DA
-                        </div>
+                        
                       </div>
                       <div className="mt-2">
                         <span className={`badge ${product.quantite_stock > 0 ? 'bg-success' : 'bg-danger'}`}>
@@ -369,14 +397,15 @@ const PVente = () => {
           <div className="mb-4">
             <div className="row">
               <div className="col-6">
-                <p><strong>Client:</strong> {clients.find(c => c.id == selectedClient)?.nom}</p>
-                <p><strong>Email:</strong> {clients.find(c => c.id == selectedClient)?.email}</p>
-                <p><strong>Téléphone:</strong> {clients.find(c => c.id == selectedClient)?.telephone}</p>
+                <p><strong>Nom:</strong> {etudiants.find(c => c.id == selectedEtudiant)?.nom}</p>
+                <p><strong>Prenom:</strong> {etudiants.find(c => c.id == selectedEtudiant)?.prenom}</p>
+                <p><strong>Filiere:</strong> {etudiants.find(c => c.id == selectedEtudiant)?.filiere}</p>
+                <p><strong>Niveau:</strong> {etudiants.find(c => c.id == selectedEtudiant)?.niveau}</p>
               </div>
               <div className="col-6 text-end">
                 <p><strong>Date:</strong> {new Date().toLocaleDateString('fr-FR')}</p>
                 <p><strong>Total Articles:</strong> {totalQuantity}</p>
-                <p><strong>Montant Total:</strong> {total.toFixed(2)} DA</p>
+                
               </div>
             </div>
           </div>
@@ -384,29 +413,25 @@ const PVente = () => {
           <table className="table table-bordered">
             <thead>
               <tr>
-                <th>Produit</th>
+                <th>Livre</th>
                 <th>Code Barre</th>
                 <th>Quantité</th>
-                <th>Prix Unitaire</th>
-                <th>Total</th>
+               
               </tr>
             </thead>
             <tbody>
               {cart.map((item) => (
                 <tr key={item.id}>
-                  <td>{item.nom}</td>
-                  <td>{item.code_barre}</td>
+                  <td>{item.titre}</td>
+                  <td>{item.isbn}</td>
                   <td>{item.quantite}</td>
-                  <td>{parseFloat(item.prix_achat || 0).toFixed(2)} DA</td>
-                  <td>{(parseFloat(item.prix_achat || 0) * item.quantite).toFixed(2)} DA</td>
+                 
                 </tr>
               ))}
             </tbody>
           </table>
           
-          <div className="text-end mt-4">
-            <h4><strong>TOTAL GÉNÉRAL: {total.toFixed(2)} DA</strong></h4>
-          </div>
+          
         </div>
       
    
@@ -432,13 +457,13 @@ const PVente = () => {
               ) : (
                 <CTable hover responsive className="mb-0">
                   <tbody>
-                    {cart.map((item) => (
+                    {console.log({cart})}
+                    {
+                    cart.map((item) => (
                       <tr key={item.id}>
                         <td className="p-2">
-                          <div className="fw-bold small">{item.nom}</div>
-                          <div className="text-muted" style={{ fontSize: '0.75rem' }}>
-                            {parseFloat(item.prix || 0).toFixed(2)} DA
-                          </div>
+                          <div className="fw-bold small">{item.titre}</div>
+                          
                         </td>
                         <td className="p-2" style={{ width: '80px' }}>
                           <CFormInput
@@ -452,9 +477,7 @@ const PVente = () => {
                           />
                         </td>
                         <td className="p-2 text-end">
-                          <div className="fw-bold small">
-                            {(parseFloat(item.prix || 0) * item.quantite).toFixed(2)} DA
-                          </div>
+                          
                           <CButton
                             size="sm"
                             color="danger"
@@ -472,28 +495,7 @@ const PVente = () => {
               )}
             </CCardBody>
           </CCard>
- <CCard>
-            <CCardHeader>
-              <strong>Montant Payé</strong>
-            
-              
-            </CCardHeader>
-            <CCardBody className='felx-column align-items-start'>
-                  <div className="d-flex align-items-center p-3">
-              <p className="mb-0 text-center"><strong>Montant Payé:</strong></p>
-              <CFormInput
-                type="number"
-                size="sm"
-                min="0"
-                value={montantPaye}
-                onChange={(e) => setMontantPaye(e.target.value)}
-                style={{ width: '100px', fontSize: '0.85rem', marginLeft: '10px' }}
-              />
-            </div>
-            <p className="text-center"><strong>Montant Restant:</strong> {(total - montantPaye).toFixed(2)} DA</p>
-             
-            </CCardBody>
-          </CCard>
+
           {/* Summary & Checkout */}
           <CCard>
             <CCardHeader>
@@ -513,8 +515,31 @@ const PVente = () => {
                 <CButton 
                   color="success" 
                   size="lg"
-                  onClick={() => setShowConfirmModal(true)}
-                  disabled={cart.length === 0 || !selectedClient}
+                  onClick={async() =>{
+                    try{
+                      console.log("selectedEtudiant",selectedEtudiant)
+                      console.log("cart",cart)
+                      await Axios.post(EMPRUNT, {
+                        etudiant_id: Number(selectedEtudiant),
+                        
+                                              
+                        
+                        details_emprunt: cart.map(item => ({
+                          livre_id:Number(item.id),
+                          qte_emp:Number(item.quantite),
+                         
+                        }))
+                      }).then(res => {
+                        console.log("res",res)
+                      })
+                      showMessage('Vente enregistrée avec succès!', 'success')
+                      resetCart()
+                    }catch(error){
+                      showMessage('Erreur lors de la vente:', 'danger')
+                      console.log("error",error)
+                    }
+                    }}
+                  disabled={cart.length === 0 || !selectedEtudiant}
                   className="fw-bold"
                 >
                   💳 Finaliser la Vente
@@ -523,7 +548,7 @@ const PVente = () => {
           className="mt-3"
           color="primary"
           onClick={reactToPrintFn}
-          disabled={cart.length === 0 || !selectedClient}
+          disabled={cart.length === 0 || !selectedEtudiant}
           
         >
           Imprimer le Reçu
