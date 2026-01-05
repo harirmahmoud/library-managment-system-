@@ -12,7 +12,7 @@ function RoleMiddleWare({allowedRole}){
     console.log(currentUser)
     console.log(currentUser?.user.roles[0].name);
     console.log((currentUser?.user.roles[0].name === allowedRole[0]));
-  return (currentUser && (currentUser.user.roles.some(r=>allowedRole.includes(r.name)))
+  return (currentUser && (currentUser?.user.roles.some(r=>allowedRole.includes(r.name)))
       ? <Outlet />
       : <></>
   )

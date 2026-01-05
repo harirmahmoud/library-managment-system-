@@ -1,8 +1,9 @@
 /* eslint-disable prettier/prettier */
 import axios from 'axios';
+import { BASEURL } from './api';
 
 const Axios = axios.create({
-  baseURL: 'https://476118de0794.ngrok-free.app/api/v1',
+  baseURL: BASEURL,
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',

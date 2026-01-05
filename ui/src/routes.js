@@ -20,6 +20,8 @@ const GestionClient = React.lazy(() => import('./views/client/gestionclient/Gest
 const Vente = React.lazy(() => import('./views/client/vente/Vente'))
 const Users = React.lazy(() => import('./views/admin/users/Users'))
 const roles_perms = React.lazy(() => import('./views/admin/roles_perms/Roles_perms'))
+const Retard = React.lazy(() => import('./views/retard/Retard'))
+const Etudiants = React.lazy(() => import('./views/etudiants/Etudiants'))
 const routes = [
   { path: '/', exact: true, name: 'Home' , allowedRoles: ['admin', 'user','gestionnaire_etudiant'],},
   { path: '/dashboard', name: 'Dashboard', element: Dashboard , allowedRoles: ['admin', 'user','gestionnaire_etudiant'],},
@@ -51,6 +53,9 @@ const routes = [
   { path: '/client/vente', name: 'ventes', element: Vente, allowedRoles: ['admin', 'user','gestionnaire_etudiant'] },
   { path: '/admin/users', name: 'Utilisateurs', element: Users , allowedRoles: ['admin']},
   { path: '/admin/roles_perms', name: 'Rôles et Permissions', element: roles_perms , allowedRoles: ['admin']},
+  { path: '/retards', name: 'Gestion des Retards', element: Retard, allowedRoles: ['admin','gestionnaire_etudiant'] },
+  { path: '/etudiants', name: 'Gestion des Etudiants', element: Etudiants, allowedRoles: ['admin','gestionnaire_etudiant'] }
+
 ]
 
 export default routes

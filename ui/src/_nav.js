@@ -3,6 +3,7 @@ import CIcon from '@coreui/icons-react'
 import {
   cilBriefcase,
   cilCart,
+  cilClock,
   cilCreditCard,
   cilGroup,
   cilHome,
@@ -77,6 +78,20 @@ const _nav = [
     ],
     allowedRoles: ['admin', 'user','gestionnaire_etudiant'],
   },
+      {
+    component: CNavItem,
+    name: 'Gestion des Etudiants',
+    to: '/etudiants',
+    icon: <CIcon icon={cilGroup} customClassName="nav-icon" />,
+    allowedRoles: ['gestionnaire_etudiant', 'admin'],
+  },
+    {
+    component: CNavItem,
+    name: 'Gestion des Retards',
+    to: '/retards',
+    icon: <CIcon icon={cilClock} customClassName="nav-icon" />,
+    allowedRoles: ['gestionnaire_etudiant', 'admin'],
+  },
   {
     component: CNavGroup,
     name: 'Client',
@@ -114,6 +129,7 @@ const _nav = [
     icon: <CIcon icon={cilBriefcase} customClassName="nav-icon" />,
     allowedRoles: ['admin'],
   },
+
 ]
 
 export default _nav

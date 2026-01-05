@@ -130,12 +130,12 @@ class LIVREController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'titre' => 'string|max:255|optional',
-            'auteur' => 'string|max:255|optional',
-            'annee' => 'date|optional',
-            'genre' => 'string|max:255|optional',
-            'isbn' => 'string|max:255|optional',
-            'quantite' => 'integer|optional',
+            'titre' => 'string|max:255|nullable',
+            'auteur' => 'string|max:255|nullable',
+            'annee' => 'date|nullable',
+            'genre' => 'string|max:255|nullable',
+            'isbn' => 'string|max:255|nullable',
+            'quantite' => 'integer|nullable',
         ]);
         if (!LIVRE::where('id', $id)->exists()) {
             return response()->json(['message' => 'Livre not found'], 404);
