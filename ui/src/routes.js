@@ -24,6 +24,12 @@ const routes = [
   { path: '/', exact: true, name: 'Home' , allowedRoles: ['admin', 'user','gestionnaire_etudiant'],},
   { path: '/dashboard', name: 'Dashboard', element: Dashboard , allowedRoles: ['admin', 'user','gestionnaire_etudiant'],},
   { path: '/PointDeVente/PVente', name: 'point de vente', element: PVente , allowedRoles: ['admin', 'user','gestionnaire_etudiant'],},
+  {
+    path: '/PointDeVente/PVente/:id',
+    name: 'Détail vente',
+    element: PVente,
+    allowedRoles: ['admin', 'user', 'gestionnaire_etudiant'],
+  },
   { path: '/fournisseur', name: 'Forms', element: GestionFournisseur, exact: true, allowedRoles: ['admin', 'user','gestionnaire_etudiant'], },
   {
     path: '/fournisseur/gestionfournisseur',

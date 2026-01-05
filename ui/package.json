@@ -20,7 +20,7 @@
     "serve": "vite preview",
     "start": "vite",
     "dev": "electron .",
-    "dist:win":" npm run build && electron-builder --win --x64",
+    "dist:win": " npm run build && electron-builder --win --x64",
     "build:electron": "mkdir -p dist-electron && cp ./src/electron/main.js ./dist-electron/main.js"
   },
   "dependencies": {
@@ -37,6 +37,7 @@
     "classnames": "^2.5.1",
     "cookie-universal": "^2.2.2",
     "core-js": "^3.45.0",
+    "lucide-react": "^0.562.0",
     "primereact": "^10.9.7",
     "prop-types": "^15.8.1",
     "react": "^19.1.1",

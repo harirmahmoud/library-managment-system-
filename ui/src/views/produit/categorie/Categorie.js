@@ -19,9 +19,13 @@ import {  EMPRUNT } from '../../../axios/api'
 
 import { useUser } from '../../../context/UserContext'
 import { ADMIN } from '../../../context/Roles'
+import { useNavigate } from 'react-router-dom'
+
 
 
 const Categorie = () => {
+  
+const navigation = useNavigate()
   const [categorie,setCategorie]=React.useState([])
   const [categorieChanged, setCategorieChanged] = React.useState(false)
   const { user, loading, error } = useUser();
@@ -147,12 +151,7 @@ const Categorie = () => {
                {user && user.roles[0].name === ADMIN && (
                <td>
                  <CButton color="info"  size="sm" className="me-2 text-white" onClick={()=>{
-                   setCategorieForm({
-                     id: cat.id,
-                     nom: cat.nom,
-                     description: cat.description,
-                   })
-                  setModal({state: true, mode: 'edit'})
+                  navigation(`/PointDeVente/PVente/${cat.id}`)
                 }}>
                   Éditer
                 </CButton>

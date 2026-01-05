@@ -23,9 +23,12 @@ import Axios from '../../../axios/axios'
 import { useUser } from '../../../context/UserContext'
 import { useReactToPrint } from 'react-to-print'
 import { EMPRUNT, ETUDIANT, LIVRE } from '../../../axios/api'
+import { useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 const PVente = () => {
   // State management
+  const navigation = useNavigate()
     const [etudiants, setEtudiants] = useState([])
     const [livres, setLivres] = useState([])
     const [emprunts, setEmprunts] = useState([])
@@ -52,9 +55,11 @@ const PVente = () => {
   const [showConfirmModal, setShowConfirmModal] = useState(false)
   const [total, setTotal] = useState(0)
   const [totalQuantity, setTotalQuantity] = useState(0)
+  const {id} = useParams()
 
   // Fetch initial data
   useEffect(() => {
+    
     const fetchData = async () => {
       
       try {
@@ -68,6 +73,24 @@ const PVente = () => {
         setEmprunts(empruntsRes.data.data)
         setEtudiants(etudiantsRes.data.data)
         setLivres(livresRes.data.data)
+        if(id){
+          await Axios.get(EMPRUNT+'/'+id).then(res => {
+            console.log(res.data)
+            setSelectedEtudiant(res.data.etudiant_id)
+           
+            res.data.details.map(detail => {
+              const livre = livresRes.data.data.find(l => Number(l.id) === Number(detail.livre_id))
+              console.log("livre",livre)
+              if(livre){
+                 setCart(prev => [
+        ...prev,
+        { ...livre, quantite:Number(detail.qte_emp) }
+      ])
+                
+              }
+            })
+          })
+        }
         console.log('Data fetched:', {emprunts: empruntsRes.data.data, etudiants: etudiantsRes.data.data, livres: livresRes.data.data}  )
         livresRes.data.data.forEach((livre) => {
           setCategories((prevCategories) => {
@@ -86,7 +109,7 @@ const PVente = () => {
         console.error('Error fetching data:', error)
         showMessage('Erreur lors du chargement des données', 'danger')
       }
-      
+    
     }
     fetchData()
   }, [])
@@ -517,6 +540,24 @@ const PVente = () => {
                   size="lg"
                   onClick={async() =>{
                     try{
+                      if(id){
+                         await Axios.put(EMPRUNT+`/${id}`, {
+                        etudiant_id: Number(selectedEtudiant),
+                        
+                                              
+                        
+                        details_emprunt: cart.map(item => ({
+                          livre_id:Number(item.id),
+                          qte_emp:Number(item.quantite),
+                         
+                        }))
+                      }).then(res => {
+                        console.log("res",res)
+                        alert('Vente modifiée avec succès!', 'success')
+                        navigation('/produit/categories')
+                      })
+                      return
+                      }
                       console.log("selectedEtudiant",selectedEtudiant)
                       console.log("cart",cart)
                       await Axios.post(EMPRUNT, {
@@ -531,6 +572,7 @@ const PVente = () => {
                         }))
                       }).then(res => {
                         console.log("res",res)
+                        
                       })
                       showMessage('Vente enregistrée avec succès!', 'success')
                       resetCart()
@@ -542,7 +584,7 @@ const PVente = () => {
                   disabled={cart.length === 0 || !selectedEtudiant}
                   className="fw-bold"
                 >
-                  💳 Finaliser la Vente
+                { id ? "💳 Modifier la Vente" : "💳 Finaliser la Vente"}
                 </CButton>
                     <CButton
           className="mt-3"
